@@ -4,6 +4,7 @@ from django.contrib import admin
 from .models import (
     Ability,
     Card,
+    CardStage,
     CardType,
     EnergyType,
     Move,
@@ -14,6 +15,7 @@ from .models import (
 admin.site.register(Ability)
 admin.site.register(Card)
 admin.site.register(CardType)
+admin.site.register(CardStage)
 admin.site.register(EnergyType)
 admin.site.register(Move)
 admin.site.register(MoveEnergyRequirement)
