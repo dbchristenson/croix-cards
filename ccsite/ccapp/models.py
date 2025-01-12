@@ -36,6 +36,13 @@ class CardType(models.Model):
         return self.name
 
 
+class CardStage(models.Model):
+    name = models.CharField(max_length=16)
+
+    def __str__(self):
+        return self.name
+
+
 class EnergyType(models.Model):
     name = models.CharField(max_length=16)
     symbol = models.ImageField(
@@ -61,6 +68,7 @@ class Card(models.Model):
 
     rarity = models.ForeignKey(Rarity, on_delete=models.CASCADE)
     card_type = models.ForeignKey(CardType, on_delete=models.CASCADE)
+    stage = models.ForeignKey(CardStage, on_delete=models.CASCADE)
     moves = models.ManyToManyField(Move)
     ability = models.ForeignKey(
         Ability, on_delete=models.CASCADE, null=True, blank=True
