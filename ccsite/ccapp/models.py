@@ -8,6 +8,14 @@ class Rarity(models.Model):
         return self.name
 
 
+class Ability(models.Model):
+    name = models.CharField(max_length=32)
+    description = models.TextField()
+
+    def __str__(self):
+        return self.name
+
+
 class Move(models.Model):
     name = models.CharField(max_length=32)
     description = models.TextField()
@@ -16,6 +24,9 @@ class Move(models.Model):
     energy_requirements = models.ManyToManyField(
         "EnergyType", through="MoveEnergyRequirement"
     )
+
+    def __str__(self):
+        return self.name
 
 
 class CardType(models.Model):
@@ -51,6 +62,9 @@ class Card(models.Model):
     rarity = models.ForeignKey(Rarity, on_delete=models.CASCADE)
     card_type = models.ForeignKey(CardType, on_delete=models.CASCADE)
     moves = models.ManyToManyField(Move)
+    ability = models.ForeignKey(
+        Ability, on_delete=models.CASCADE, null=True, blank=True
+    )
 
     def __str__(self):
         return self.name
@@ -67,3 +81,6 @@ class Collection(models.Model):
 
     def __str__(self):
         return self.name
+
+    def add_card(self, card):
+        self.cards.add(card)
