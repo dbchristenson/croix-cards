@@ -1,4 +1,19 @@
+from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.db import models
+
+
+class User(AbstractUser):
+    username = models.CharField(max_length=16, unique=True)
+    email = models.EmailField(max_length=128, null=False, unique=True)
+    cards = models.ManyToManyField("Card", through="UserCard")
+
+    # Necessary for avoiding conflicts with AbstractUser default relationships
+    groups = models.ManyToManyField(Group, related_name="ccapp_user_set")
+    user_permissions = models.ManyToManyField(
+        Permission, related_name="ccapp_user_set"
+    )
+
+    REQUIRED_FIELDS = ["email", "password"]
 
 
 class Rarity(models.Model):
@@ -66,6 +81,7 @@ class Card(models.Model):
         upload_to="card_illustrations/", blank=True, null=True
     )
 
+    hitpoints = models.IntegerField()
     rarity = models.ForeignKey(Rarity, on_delete=models.CASCADE)
     card_type = models.ForeignKey(CardType, on_delete=models.CASCADE)
     stage = models.ForeignKey(CardStage, on_delete=models.CASCADE)
@@ -76,6 +92,15 @@ class Card(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class UserCard(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    card = models.ForeignKey(Card, on_delete=models.CASCADE)
+    quantity = models.IntegerField()
+
+    def __str__(self):
+        return f"{self.user.username} - {self.card.name}"
 
 
 class Collection(models.Model):
