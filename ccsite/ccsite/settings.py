@@ -35,6 +35,8 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     "ccapp.apps.CcappConfig",
+    "crispy_forms",
+    "crispy_bootstrap5",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -129,3 +131,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Handling user authentication with email or username
 AUTHENTICATION_BACKENDS = ["path.to.EmailOrUsernameBackend"]
+
+# crispy_forms settings
+CRISPY_TEMPLATE_PACK = "bootstrap5"

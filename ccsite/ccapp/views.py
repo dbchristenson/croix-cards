@@ -1,5 +1,4 @@
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.decorators import login_required
 from django.db.utils import IntegrityError
 from django.shortcuts import redirect, render
 
@@ -59,9 +58,12 @@ def register(request):
 
 
 ### Card Management (Admins) ###    # noqa: E266
-@login_required
 def add_card(request):
     """View for the add card page."""
+
+    # Check if the user is an admin
+    if not request.user.is_staff:
+        return redirect("home")
 
     if request.method == "POST":
         form = AddCardForm(request.POST)

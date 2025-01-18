@@ -1,11 +1,21 @@
-{% extends "base.html" %}
-{% block content %}
-<h1>Register</h1>
-<div>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Submit</button>
-    </form>
-</div>
-{% endblock %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CCTCG</title>
+</head>
+
+<body>
+    {% load crispy_forms_tags %}
+    <h1>Register</h1>
+    <div>
+        <form method="post" , enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form|crispy }}
+        </form>
+    </div>
+</body>
+
+</html>
