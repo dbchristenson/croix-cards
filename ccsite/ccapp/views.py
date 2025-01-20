@@ -27,6 +27,9 @@ def logout_view(request):
 def register(request):
     """Handles registering new accounts."""
 
+    if request.user.is_authenticated:
+        return redirect("home")
+
     if request.method == "POST":
         form = SignUpForm(request.POST)
 
