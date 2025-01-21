@@ -7,12 +7,12 @@ class LoginRequiredMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        # Skip authentication check for the index page or login page
+        # Skip authentication check for the index, sign_in, and register pages
         excluded_paths = [
             reverse("index"),
-            reverse("login"),
+            reverse("sign_in"),
             reverse("register"),
-        ]  # Add paths that don't require login
+        ]
         if (
             not request.user.is_authenticated
             and request.path not in excluded_paths

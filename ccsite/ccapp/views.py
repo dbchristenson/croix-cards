@@ -2,7 +2,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.db.utils import IntegrityError
 from django.shortcuts import redirect, render
 
-from .forms import AddCardForm, SignUpForm
+from .forms import AddCardForm, SignInForm, SignUpForm
 
 
 # Create your views here.
@@ -57,7 +57,39 @@ def register(request):
     else:
         form = SignUpForm()
 
-    return render(request, "register.html", {"form": form})
+    return render(request, "accounts/register.html", {"form": form})
+
+
+def sign_in(request):
+    """Handles logging in users."""
+
+    if request.user.is_authenticated:
+        return redirect("home")
+
+    if request.method == "POST":
+        form = SignInForm(request.POST)
+
+        if form.is_valid():
+            username = form.cleaned_data["username"]
+            password = form.cleaned_data["password"]
+            user = authenticate(request, username=username, password=password)
+
+            if user is not None:
+                login(request, user)
+                return redirect("home")
+            else:
+                form.add_error(None, "Invalid username or password.")
+    else:
+        form = SignInForm()
+
+    return render(request, "accounts/sign_in.html", {"form": form})
+
+
+### General Views ###    # noqa: E266
+def home(request):
+    """View for the home page."""
+
+    return render(request, "home.html")
 
 
 ### Card Management (Admins) ###    # noqa: E266

@@ -28,3 +28,8 @@ body {
     position: absolute;
     left: 0;
 }
+
+.right-text {
+    position: absolute;
+    right: 0;
+}

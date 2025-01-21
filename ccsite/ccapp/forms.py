@@ -1,7 +1,7 @@
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Column, Div, Field, Layout, Row, Submit
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 
 from .models import Ability, Card, CardStage, CardType, Move, Rarity, User
 
@@ -36,6 +36,40 @@ class SignUpForm(UserCreationForm):
                 Column("password1", css_class="form-group col-md-6 mb-0"),
             ),
             Row(Submit("submit", "Sign Up", css_class="btn btn-primary")),
+        )
+        self.helper.form_method = "post"
+        self.helper.form_class = "form"
+
+
+class SignInForm(AuthenticationForm):
+    """Form for logging in a user."""
+
+    username = forms.CharField(max_length=16, required=True)
+    password = forms.CharField(widget=forms.PasswordInput, required=True)
+
+    class Meta:
+        model = User
+        fields = (
+            "username",
+            "password",
+        )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Initialize the FormHelper
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            Row(
+                Column(
+                    "username", css_class="form-group col-12 col-md-6 mb-3"
+                ),  # noqa: E501
+                Column(
+                    "password", css_class="form-group col-12 col-md-6 mb-3"
+                ),  # noqa: E501
+                css_class="form-row",
+            ),
+            Row(Submit("submit", "Sign In", css_class="btn btn-primary")),
         )
         self.helper.form_method = "post"
         self.helper.form_class = "form"
