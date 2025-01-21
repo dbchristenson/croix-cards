@@ -15,7 +15,7 @@
     {% load crispy_forms_tags %}
     <h1>Sign In</h1>
     <div class="form-container">
-        <form action="post" , enctype="multipart/form-data">
+        <form method="post" , action="{% url 'sign_in' %}" , enctype="multipart/form-data">
             {% csrf_token %}
             {{ form|crispy }}
             <div class="form-submit">

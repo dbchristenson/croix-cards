@@ -44,7 +44,7 @@ class SignUpForm(UserCreationForm):
 class SignInForm(AuthenticationForm):
     """Form for logging in a user."""
 
-    username = forms.CharField(max_length=16, required=True)
+    username = forms.CharField(max_length=64, required=True)
     password = forms.CharField(widget=forms.PasswordInput, required=True)
 
     class Meta:
@@ -69,7 +69,6 @@ class SignInForm(AuthenticationForm):
                 ),  # noqa: E501
                 css_class="form-row",
             ),
-            Row(Submit("submit", "Sign In", css_class="btn btn-primary")),
         )
         self.helper.form_method = "post"
         self.helper.form_class = "form"

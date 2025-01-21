@@ -51,10 +51,12 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "ccapp.middleware.LoginRequiredMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "ccapp.middleware.LoginRequiredMiddleware",
 ]
+
+LOGIN_URL = "sign_in"
 
 ROOT_URLCONF = "ccsite.urls"
 
@@ -134,7 +136,8 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Handling user authentication with email or username
-AUTHENTICATION_BACKENDS = ["path.to.EmailOrUsernameBackend"]
+AUTHENTICATION_BACKENDS = ["ccapp.backends.EmailOrUsernameBackend"]
+AUTH_USER_MODEL = "ccapp.User"
 
 # crispy_forms settings
 CRISPY_TEMPLATE_PACK = "bootstrap5"

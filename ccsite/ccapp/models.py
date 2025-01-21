@@ -6,6 +6,8 @@ class User(AbstractUser):
     username = models.CharField(max_length=16, unique=True)
     email = models.EmailField(max_length=128, null=False, unique=True)
     cards = models.ManyToManyField("Card", through="UserCard")
+    level = models.IntegerField(default=1)
+    experience = models.IntegerField(default=0)
 
     # Necessary for avoiding conflicts with AbstractUser default relationships
     groups = models.ManyToManyField(Group, related_name="ccapp_user_set")

@@ -7,13 +7,19 @@ from .forms import AddCardForm, SignInForm, SignUpForm
 
 # Create your views here.
 def index(request):
+    """View for the index page."""
+
+    # Redirect the user to the home page if they are already logged in
+    if request.user.is_authenticated:
+        return redirect("home/")
+
     return render(request, "index.html")
 
 
 def logout_view(request):
     """View for the logout page that logs the user out."""
 
-    # Check the user is logged in
+    # Check if the user is logged in
     if not request.user.is_authenticated:
         return redirect("/")
 
@@ -67,19 +73,17 @@ def sign_in(request):
         return redirect("home")
 
     if request.method == "POST":
-        form = SignInForm(request.POST)
+        form = SignInForm(request.POST, data=request.POST)
 
         if form.is_valid():
-            username = form.cleaned_data["username"]
-            password = form.cleaned_data["password"]
-            user = authenticate(request, username=username, password=password)
+            user = form.get_user()
+            login(request, user)
+            return redirect("home")
 
-            if user is not None:
-                login(request, user)
-                return redirect("home")
-            else:
-                form.add_error(None, "Invalid username or password.")
+        else:
+            form.add_error(None, "Invalid username or password.")
     else:
+        print("Creating new form.")
         form = SignInForm()
 
     return render(request, "accounts/sign_in.html", {"form": form})

@@ -13,9 +13,16 @@ class LoginRequiredMiddleware:
             reverse("sign_in"),
             reverse("register"),
         ]
+
+        # Normalize the current path
+        current_path = request.path_info
+
         if (
             not request.user.is_authenticated
-            and request.path not in excluded_paths
+            and current_path not in excluded_paths
         ):
+            print(f"Redirecting unauth user from {request.path} to index")
+            print(f"MW Session Key After Login: {request.session.session_key}")
             return redirect("index")
+
         return self.get_response(request)
