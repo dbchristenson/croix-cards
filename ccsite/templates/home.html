@@ -2,7 +2,13 @@
 
 {% block content %}
 <h1>Croix Cards TCG</h1>
-<div>
-    <a href="/add_card">Add Card</a>
+<div id="pack-display">
+    <div id="pack-cooldown"></div>
+    <div id="pack-hourglass-container">
+        <button>⏳</button>
+        <label for="button"></label>
+        <div class="pack-hourglass-dropdown"></div>
+    </div>
 </div>
+<a href="/add_card">Add Card</a>
 {% endblock %}

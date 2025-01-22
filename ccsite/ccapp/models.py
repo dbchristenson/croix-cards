@@ -6,32 +6,25 @@ from django.utils.timezone import now
 
 
 class User(AbstractUser):
+    REQUIRED_FIELDS = ["email", "password"]
     username = models.CharField(max_length=16, unique=True)
     email = models.EmailField(max_length=128, null=False, unique=True)
+    profile_picture = models.ForeignKey(
+        "ProfilePicture", on_delete=models.SET_NULL, null=True
+    )
+
+    # Card collection and progression tracking
     cards = models.ManyToManyField("Card", through="UserCard")
     level = models.IntegerField(default=1)
     experience = models.IntegerField(default=0)
 
     # Pack opening tracking
+    MAX_PACKS = 5
+    PACK_COOLDOWN = timedelta(hours=12)
     available_packs = models.IntegerField(default=0, null=False)
     last_refresh = models.DateTimeField(null=True)
-
-    def refresh_packs(self, cooldown=timedelta(minutes=1), max_packs=5):
-        current_time = now()
-
-        time_since_last_refresh = current_time - self.last_refresh
-
-        if time_since_last_refresh >= cooldown:
-            packs_to_add = time_since_last_refresh // cooldown
-            self.last_refresh = current_time
-            self.available_packs = min(
-                self.available_packs + packs_to_add, max_packs
-            )
-
-            self.last_pack_refresh = current_time - (
-                time_since_last_refresh % cooldown
-            )
-            self.save
+    time_to_next_refresh = models.DurationField(default=timedelta(0))
+    pack_hourglasses = models.IntegerField(default=24, null=False)
 
     # Necessary for avoiding conflicts with AbstractUser default relationships
     groups = models.ManyToManyField(Group, related_name="ccapp_user_set")
@@ -39,7 +32,77 @@ class User(AbstractUser):
         Permission, related_name="ccapp_user_set"
     )
 
-    REQUIRED_FIELDS = ["email", "password"]
+    # Methods
+    def refresh_packs(self, cooldown=PACK_COOLDOWN, max_packs: int = MAX_PACKS):
+        """Refreshes the user's available packs based on the cooldown period."""
+        time_since_last_refresh = now() - self.last_refresh
+
+        if time_since_last_refresh >= cooldown:
+            packs_to_add = time_since_last_refresh // cooldown
+            self.last_refresh = now()
+            self.available_packs = min(
+                self.available_packs + packs_to_add, max_packs
+            )
+
+            self.last_refresh = now() - (time_since_last_refresh % cooldown)
+        else:
+            # Update remaining time to next refresh
+            self.time_to_next_refresh = cooldown - time_since_last_refresh
+
+        self.save
+
+    def use_hourglass(self, num_hourglasses: int):
+        """Uses an hourglass to refresh the user's available packs."""
+        c1 = self.pack_hourglasses > num_hourglasses
+        c2 = self.time_to_next_refresh() > timedelta(minutes=0)
+
+        if c1 and c2:
+            # Calculate how many packs would be added
+            total_hours = self.MAX_PACKS * self.PACK_COOLDOWN
+            time_since_last_refresh = now() - self.last_refresh
+            hours_worth_of_packs_held = (
+                self.available_packs * self.PACK_COOLDOWN
+                + time_since_last_refresh
+            )
+
+            available_hours = total_hours - hours_worth_of_packs_held
+            packs_that_can_be_added = available_hours // self.PACK_COOLDOWN
+
+            # Print all info
+            print(f"Total hours: {total_hours}")
+            print(f"Time since last refresh: {time_since_last_refresh}")
+            print(f"Hours worth of packs held: {hours_worth_of_packs_held}")
+            print(f"Available hours: {available_hours}")
+            print(f"Packs that can be added: {packs_that_can_be_added}")
+
+            if self.available_packs + packs_that_can_be_added > self.MAX_PACKS:
+                raise ValueError(
+                    (
+                        f"Using {num_hourglasses} hourglasses would exceed"
+                        " maximum number of allowed packs."
+                    )
+                )
+
+            # Check complete: max available packs is not exceeded
+            print("Max available packs not exceeded.")
+            self.available_packs += packs_that_can_be_added
+
+        else:
+            raise ValueError("Insufficient hourglasses or cannot use one.")
+
+
+class ProfilePicture(models.Model):
+    image = models.ImageField(upload_to="profile_pictures/")
+
+    def __str__(self):
+        return self.image.name
+
+
+class Illustrator(models.Model):
+    name = models.CharField(max_length=64)
+
+    def __str__(self):
+        return self.name
 
 
 class Rarity(models.Model):
@@ -103,6 +166,9 @@ class MoveEnergyRequirement(models.Model):
 class Card(models.Model):
     name = models.CharField(max_length=16)
     description = models.TextField()
+    illustrator = models.ForeignKey(
+        Illustrator, default="", on_delete=models.CASCADE
+    )
     image = models.ImageField(
         upload_to="card_illustrations/", blank=True, null=True
     )
