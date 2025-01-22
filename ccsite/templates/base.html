@@ -1,4 +1,5 @@
 {% load static %}
+{% load active_url_tag %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -26,16 +27,16 @@
         <footer class="base-footer">
             <ol class="nav nav-pills nav-justified">
                 <li class="nav-item">
-                    <a href="home" class="nav-link">🏠 Home</a>
+                    <a href="/home" class="nav-link {% active_class request 'home' %}">🏠 Home</a>
                 </li>
                 <li class="nav-item">
-                    <a href="dex" class="nav-link">📚 Dex</a>
+                    <a href="/dex" class="nav-link {% active_class request 'dex' %}">📚 Dex</a>
                 </li>
                 <li class="nav-item">
-                    <a href="battle" class="nav-link">🥊 Battle</a>
+                    <a href="/battle" class="nav-link {% active_class request 'battle' %}">🥊 Battle</a>
                 </li>
                 <li class="nav-item">
-                    <a href="inventory" class="nav-link">🎒 Inventory</a>
+                    <a href="/inventory" class="nav-link {% active_class request 'inventory' %}">🎒 Inventory</a>
                 </li>
             </ol>
         </footer>
