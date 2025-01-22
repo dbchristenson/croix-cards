@@ -7,39 +7,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}CCTCG{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
 </head>
 
 <body>
-    <header>
-        {% if user.is_authenticated %}
-        <a href="/profile">user.username</a>
-        {% else %}
+    <div class="wrapper">
+        <header>
+            {% if user.is_authenticated %}
+            <a href="/profile">user.username</a>
+            {% else %}
 
-        {% endif %}
-    </header>
-    <main>
-        {% block content %}
-        {% endblock %}
-    </main>
-    <footer class="base-footer">
-        <nav class="nav nav-pills nav-justified">
+            {% endif %}
+        </header>
+        <main>
+            {% block content %}
+            {% endblock %}
+        </main>
+        <footer class="base-footer">
             <ol class="nav nav-pills nav-justified">
-                <li class="nav-link">
-                    <a href="home">Home</a>
+                <li class="nav-item">
+                    <a href="home" class="nav-link">🏠 Home</a>
                 </li>
-                <li class="nav-link">
-                    <a href="dex">Dex</a>
+                <li class="nav-item">
+                    <a href="dex" class="nav-link">📚 Dex</a>
                 </li>
-                <li class="nav-link">
-                    <a href="battle">Battle</a>
+                <li class="nav-item">
+                    <a href="battle" class="nav-link">🥊 Battle</a>
                 </li>
-                <li class="nav-link">
-                    <a href="inventory">Inventory</a>
+                <li class="nav-item">
+                    <a href="inventory" class="nav-link">🎒 Inventory</a>
                 </li>
             </ol>
-        </nav>
-    </footer>
+        </footer>
+    </div>
 </body>
 
 </html>

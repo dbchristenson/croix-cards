@@ -1,0 +1,36 @@
+html,
+body {
+    height: 100%;
+    /* Ensure full height */
+    margin: 0;
+}
+
+.nav-link {
+    font-size: 16px;
+}
+
+.nav-item {
+    border-left: 2px solid #ccc;
+}
+
+.nav-item:first-child {
+    border-left: none;
+}
+
+.base-footer {
+    background-color: #f8f9fa;
+    /* Light gray */
+    padding: 10px 0;
+    text-align: center;
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+    /* Optional shadow */
+    margin-top: auto;
+    /* Push the footer to the bottom */
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    /* Ensure the wrapper takes up the full viewport */
+}
