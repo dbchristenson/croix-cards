@@ -1,5 +1,8 @@
+from datetime import timedelta
+
 from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.db import models
+from django.utils.timezone import now
 
 
 class User(AbstractUser):
@@ -8,6 +11,27 @@ class User(AbstractUser):
     cards = models.ManyToManyField("Card", through="UserCard")
     level = models.IntegerField(default=1)
     experience = models.IntegerField(default=0)
+
+    # Pack opening tracking
+    available_packs = models.IntegerField(default=0, null=False)
+    last_refresh = models.DateTimeField(null=True)
+
+    def refresh_packs(self, cooldown=timedelta(minutes=1), max_packs=5):
+        current_time = now()
+
+        time_since_last_refresh = current_time - self.last_refresh
+
+        if time_since_last_refresh >= cooldown:
+            packs_to_add = time_since_last_refresh // cooldown
+            self.last_refresh = current_time
+            self.available_packs = min(
+                self.available_packs + packs_to_add, max_packs
+            )
+
+            self.last_pack_refresh = current_time - (
+                time_since_last_refresh % cooldown
+            )
+            self.save
 
     # Necessary for avoiding conflicts with AbstractUser default relationships
     groups = models.ManyToManyField(Group, related_name="ccapp_user_set")
