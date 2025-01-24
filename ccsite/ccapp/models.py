@@ -33,8 +33,12 @@ class User(AbstractUser):
     )
 
     # Methods
-    def refresh_packs(self, cooldown=PACK_COOLDOWN, max_packs: int = MAX_PACKS):
-        """Refreshes the user's available packs based on the cooldown period."""
+    def refresh_packs(self, cooldown=PACK_COOLDOWN, max_packs=MAX_PACKS):
+        """
+        Method for tracking and refreshing the user's available packs. When
+        called, the method will check for the time since the last time a pack
+        was added to the user's account and add packs accordingly.
+        """
         time_since_last_refresh = now() - self.last_refresh
 
         if time_since_last_refresh >= cooldown:
@@ -52,7 +56,13 @@ class User(AbstractUser):
         self.save
 
     def use_hourglass(self, num_hourglasses: int):
-        """Uses an hourglass to refresh the user's available packs."""
+        """
+        Uses hourglasses to reduce the cooldown time for a user to receive
+        an additional pack. The number of hourglasses used is passed as an
+        argument, and the method will calculate whether the user has enough
+        hourglasses to use and whether the user can use the hourglasses
+        without exceeding the maximum number of packs allowed.
+        """
         c1 = self.pack_hourglasses > num_hourglasses
         c2 = self.time_to_next_refresh() > timedelta(minutes=0)
 

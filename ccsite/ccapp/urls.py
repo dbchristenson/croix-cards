@@ -10,6 +10,4 @@ urlpatterns = [
     path("logout/", views.logout_view, name="logout"),
     # Home page
     path("home/", views.home, name="home"),
-    # Card management
-    path("add_card/", views.add_card, name="add_card"),
 ]

@@ -1,6 +1,10 @@
+import json
+
 from django.contrib.auth import authenticate, login, logout
 from django.db.utils import IntegrityError
+from django.http import JsonResponse
 from django.shortcuts import redirect, render
+from django.views.decorators.csrf import csrf_exempt
 
 from .forms import AddCardForm, SignInForm, SignUpForm
 
@@ -17,7 +21,7 @@ def index(request):
 
 
 def logout_view(request):
-    """View for the logout page that logs the user out."""
+    """Handles log outs."""
 
     # Check if the user is logged in
     if not request.user.is_authenticated:
@@ -89,6 +93,38 @@ def sign_in(request):
     return render(request, "accounts/sign_in.html", {"form": form})
 
 
+### General Service Views ###   # noqa: E266
+@csrf_exempt
+def refresh_packs_view(request):
+    """
+    View to refresh user packs.
+    """
+    user = request.user  # Assume authentication middleware is in place
+    user.refresh_packs()
+    return JsonResponse(
+        {
+            "available_packs": user.available_packs,
+            "time_to_next_refresh": user.time_to_next_refresh.total_seconds(),
+        }
+    )
+
+
+@csrf_exempt
+def use_hourglass_view(request):
+    """View to use hourglasses to refresh packs."""
+    user = request.user
+    data = json.loads(request.body)
+    num_hourglasses = data.get("num_hourglasses", 0)
+
+    try:
+        user.use_hourglass(num_hourglasses)
+        return JsonResponse(
+            {"success": True, "available_packs": user.available_packs}
+        )
+    except ValueError as e:
+        return JsonResponse({"success": False, "error": str(e)})
+
+
 ### General Views ###    # noqa: E266
 def home(request):
     """View for the home page."""
@@ -97,6 +133,16 @@ def home(request):
 
 
 ### Card Management (Admins) ###    # noqa: E266
+def manage_cards(request):
+    """View for the manage cards page."""
+
+    # Check if the user is an admin
+    if not request.user.is_staff:
+        return redirect("home")
+
+    return render(request, "manage/manage_cards.html")
+
+
 def add_card(request):
     """View for the add card page."""
 
