@@ -3,9 +3,20 @@ from crispy_forms.layout import Column, Div, Field, Layout, Row, Submit
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 
-from .models import Ability, Card, CardStage, CardType, Move, Rarity, User
+from .models import (
+    Ability,
+    Card,
+    CardStage,
+    CardType,
+    Collection,
+    Illustrator,
+    Move,
+    Rarity,
+    User,
+)
 
 
+### User Registration ###   # noqa: E266
 class SignUpForm(UserCreationForm):
     """Form for creating a new user."""
 
@@ -72,6 +83,69 @@ class SignInForm(AuthenticationForm):
         )
         self.helper.form_method = "post"
         self.helper.form_class = "form"
+
+
+### Manage Cards ###   # noqa: E266
+class AddAbilityForm(forms.ModelForm):
+    """Form for adding a new ability."""
+
+    name = forms.CharField(max_length=64, required=True)
+    description = forms.CharField(widget=forms.Textarea, required=True)
+
+    class Meta:
+        model = Ability
+        fields = (
+            "name",
+            "description",
+        )
+
+
+class AddMoveForm(forms.ModelForm):
+    """Form for adding a new move."""
+
+    name = forms.CharField(max_length=64, required=True)
+    description = forms.CharField(widget=forms.Textarea, required=True)
+
+    class Meta:
+        model = Move
+        fields = (
+            "name",
+            "description",
+        )
+
+
+class AddIllustratorForm(forms.ModelForm):
+    """Form for adding a new illustrator."""
+
+    name = forms.CharField(max_length=64, required=True)
+
+    class Meta:
+        model = Illustrator
+        fields = ("name",)
+
+
+class AddProfilePictureForm(forms.ModelForm):
+    """Form for adding a new profile picture."""
+
+    image = forms.ImageField(required=True)
+
+    class Meta:
+        model = User
+        fields = ("image",)
+
+
+class AddCollectionForm(forms.ModelForm):
+    """Form for adding a new collection."""
+
+    name = forms.CharField(max_length=64, required=True)
+    description = forms.CharField(widget=forms.Textarea, required=True)
+
+    class Meta:
+        model = Collection
+        fields = (
+            "name",
+            "description",
+        )
 
 
 class AddCardForm(forms.ModelForm):

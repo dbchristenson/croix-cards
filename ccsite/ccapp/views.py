@@ -1,5 +1,6 @@
 import json
 
+from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import authenticate, login, logout
 from django.db.utils import IntegrityError
 from django.http import JsonResponse
@@ -133,28 +134,81 @@ def home(request):
 
 
 ### Card Management (Admins) ###    # noqa: E266
-def manage_cards(request):
-    """View for the manage cards page."""
-
-    # Check if the user is an admin
-    if not request.user.is_staff:
-        return redirect("home")
-
-    return render(request, "manage/manage_cards.html")
+@staff_member_required
+def manage(request):
+    """View for managing cards."""
+    return render(request, "manage/manage.html")
 
 
+@staff_member_required
+def ability(request):
+    """View for listing abilities."""
+    return render(request, "manage/ability.html")
+
+
+@staff_member_required
+def add_ability(request):
+    """View for adding an ability."""
+    return render(request, "manage/add_ability.html")
+
+
+@staff_member_required
+def move(request):
+    """View for listing moves."""
+    return render(request, "manage/move.html")
+
+
+@staff_member_required
+def add_move(request):
+    """View for adding a move."""
+    return render(request, "manage/add_move.html")
+
+
+@staff_member_required
+def illustrator(request):
+    """View for listing illustrators."""
+    return render(request, "manage/illustrator.html")
+
+
+@staff_member_required
+def add_illustrator(request):
+    """View for adding an illustrator."""
+    return render(request, "manage/add_illustrator.html")
+
+
+@staff_member_required
+def profile_picture(request):
+    """View for listing profile pictures."""
+    return render(request, "manage/profile_picture.html")
+
+
+@staff_member_required
+def add_profile_picture(request):
+    """View for adding a profile picture."""
+    return render(request, "manage/add_profile_picture.html")
+
+
+@staff_member_required
+def collection(request):
+    """View for listing collections."""
+    return render(request, "manage/collection.html")
+
+
+@staff_member_required
+def add_collection(request):
+    """View for adding a collection."""
+    return render(request, "manage/add_collection.html")
+
+
+@staff_member_required
+def card(request):
+    """View for listing cards."""
+    return render(request, "manage/card.html")
+
+
+@staff_member_required
 def add_card(request):
-    """View for the add card page."""
+    """View for adding a card."""
+    form = AddCardForm()
 
-    # Check if the user is an admin
-    if not request.user.is_staff:
-        return redirect("home")
-
-    if request.method == "POST":
-        form = AddCardForm(request.POST)
-
-        if form.is_valid():
-            form.save()
-            return redirect("add_card.html")
-
-    return render(request, "add_card.html")
+    return render(request, "manage/add_card.html", {"form": form})
