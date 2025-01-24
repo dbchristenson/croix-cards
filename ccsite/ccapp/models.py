@@ -176,6 +176,7 @@ class MoveEnergyRequirement(models.Model):
 class Card(models.Model):
     name = models.CharField(max_length=16)
     description = models.TextField()
+    dex_number = models.IntegerField()
     illustrator = models.ForeignKey(
         Illustrator, default="", on_delete=models.CASCADE
     )

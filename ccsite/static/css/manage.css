@@ -1,0 +1,18 @@
+/* Prevent horizontal scrolling */
+body {
+    margin: 0;
+    overflow-x: hidden;
+}
+
+/* Add responsive margins for the cards */
+.form-container {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+/* Optional: Customize card appearance */
+.card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
