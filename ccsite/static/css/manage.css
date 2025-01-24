@@ -4,6 +4,13 @@ body {
     overflow-x: hidden;
 }
 
+.h1-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
 /* Add responsive margins for the cards */
 .form-container {
     padding-left: 10px;

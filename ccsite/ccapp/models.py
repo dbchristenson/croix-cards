@@ -65,8 +65,9 @@ class User(AbstractUser):
         """
         c1 = self.pack_hourglasses > num_hourglasses
         c2 = self.time_to_next_refresh() > timedelta(minutes=0)
+        c3 = self.available_packs < self.MAX_PACKS
 
-        if c1 and c2:
+        if c1 and c2 and c3:
             # Calculate how many packs would be added
             total_hours = self.MAX_PACKS * self.PACK_COOLDOWN
             time_since_last_refresh = now() - self.last_refresh
@@ -96,7 +97,11 @@ class User(AbstractUser):
             # Check complete: max available packs is not exceeded
             print("Max available packs not exceeded.")
             self.available_packs += packs_that_can_be_added
+            self.pack_hourglasses -= num_hourglasses
 
+            # idk if this works lol
+            self.last_refresh = now() - (available_hours % self.PACK_COOLDOWN)
+            self.save()
         else:
             raise ValueError("Insufficient hourglasses or cannot use one.")
 
@@ -192,9 +197,43 @@ class Card(models.Model):
     ability = models.ForeignKey(
         Ability, on_delete=models.CASCADE, null=True, blank=True
     )
+    is_ex = models.BooleanField(default=False)
+    evolves_from = models.ForeignKey(
+        "self", on_delete=models.CASCADE, null=True, blank=True
+    )
 
     def __str__(self):
         return self.name
+
+
+class Binder(models.Model):
+    name = models.CharField(max_length=64)
+    cover_image = models.ImageField(
+        upload_to="binder_covers/", blank=True, null=True
+    )
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.name} (User: {self.user.username})"
+
+
+class BinderSlot(models.Model):
+    binder = models.ForeignKey(
+        Binder, on_delete=models.CASCADE, related_name="slots"
+    )
+    card = models.ForeignKey(Card, on_delete=models.CASCADE)
+    slot_number = models.PositiveIntegerField()
+
+    class Meta:
+        unique_together = (
+            "binder",
+            "slot_number",
+        )  # Ensure no duplicate slots in a binder
+
+    def __str__(self):
+        return (
+            f"Slot {self.slot_number} in {self.binder.name}: {self.card.name}"
+        )
 
 
 class UserCard(models.Model):
