@@ -4,10 +4,11 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import authenticate, login, logout
 from django.db.utils import IntegrityError
 from django.http import JsonResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.csrf import csrf_exempt
 
 from .forms import AddCardForm, SignInForm, SignUpForm
+from .models import User
 
 
 # Create your views here.
@@ -131,6 +132,17 @@ def home(request):
     """View for the home page."""
 
     return render(request, "home.html")
+
+
+def profile(request):
+    """View for the user profile page."""
+    username = request.GET.get("username")
+    if username:
+        user = get_object_or_404(User, id=username)
+    else:
+        user = request.user
+
+    return render(request, "accounts/profile.html", {"profile_user": user})
 
 
 ### Card Management (Admins) ###    # noqa: E266
